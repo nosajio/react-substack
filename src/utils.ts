@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { parseFeed } from './parser';
 import type { Substack } from './parser/types';
 
