@@ -28,7 +28,7 @@ export const useSubstack = (subdomain: string): UseSubstackValue => {
       const result = await getAndParseSubstack(subdomain);
       setSubstack(result);
       setState('data');
-    }
+    };
     getSubstack();
   }, [state, subdomain]);
 
