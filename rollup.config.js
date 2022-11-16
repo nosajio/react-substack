@@ -4,7 +4,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import dtsMod from 'rollup-plugin-dts';
 import peerDepsExtern from 'rollup-plugin-peer-deps-external';
-import {terser} from 'rollup-plugin-terser';
 const dts = dtsMod.default;
 const pkg = require('./package.json');
 
@@ -29,7 +28,6 @@ export default [
       json(),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
-      terser(),
     ],
   },
   {
