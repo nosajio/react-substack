@@ -1,7 +1,10 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
-import dts from "rollup-plugin-dts";
+import dtsMod from "rollup-plugin-dts";
+const dts = dtsMod.default;
+
+console.log(dts);
 
 const pkg = require("./package.json");
 
