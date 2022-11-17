@@ -207,7 +207,9 @@ var getFeed = function (url) { return __awaiter(void 0, void 0, void 0, function
                 if (!url.startsWith('https://')) {
                     throw new Error('invalid URL passed');
                 }
-                return [4 /*yield*/, fetch(url)];
+                return [4 /*yield*/, fetch(url, {
+                        mode: 'no-cors',
+                    })];
             case 1:
                 res = _a.sent();
                 return [4 /*yield*/, res.text()];
@@ -234,11 +236,12 @@ var getAndParseSubstack = function (subdomain) { return __awaiter(void 0, void 0
  * Returns any substack newsletter as JSON
  */
 var useSubstack = function (subdomain) {
+    var requestLock = react.useRef(false);
     var _a = react.useState(), substack = _a[0], setSubstack = _a[1];
     var _b = react.useState(), error = _b[0], setError = _b[1];
     var _c = react.useState('ready'), state = _c[0], setState = _c[1];
     react.useEffect(function () {
-        if (state === 'loading')
+        if (state === 'loading' || requestLock.current)
             return;
         if (subdomain === '') {
             setError('A valid substack subdomain is required');
@@ -249,6 +252,7 @@ var useSubstack = function (subdomain) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        requestLock.current = true;
                         setState('loading');
                         return [4 /*yield*/, getAndParseSubstack(subdomain)];
                     case 1:

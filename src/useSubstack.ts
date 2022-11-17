@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Substack } from './parser';
 import { getAndParseSubstack } from './utils';
 
@@ -13,17 +13,19 @@ type UseSubstackStates = 'loading' | 'ready' | 'data';
  * Returns any substack newsletter as JSON
  */
 export const useSubstack = (subdomain: string): UseSubstackValue => {
+  const requestLock = useRef<boolean>(false);
   const [substack, setSubstack] = useState<Substack>();
   const [error, setError] = useState<string>();
   const [state, setState] = useState<UseSubstackStates>('ready');
 
   useEffect(() => {
-    if (state === 'loading') return;
+    if (state === 'loading' || requestLock.current) return;
     if (subdomain === '') {
       setError('A valid substack subdomain is required');
       return;
     }
     const getSubstack = async () => {
+      requestLock.current = true;
       setState('loading');
       const result = await getAndParseSubstack(subdomain);
       setSubstack(result);
