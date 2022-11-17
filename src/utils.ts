@@ -11,7 +11,9 @@ export const getFeed = async (url: string) => {
   if (!url.startsWith('https://')) {
     throw new Error('invalid URL passed');
   }
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    mode: 'no-cors',
+  });
   return await res.text();
 };
 
