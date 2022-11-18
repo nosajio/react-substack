@@ -1,5 +1,5 @@
 import type { Substack } from './parser/types';
-export declare const substackFeedUrl: (subdomain: string) => string;
+export declare const proxyUrl: (subdomain: string) => string;
 /**
  * Get the raw XML feed for any substack
  */

@@ -191,9 +191,8 @@ var parseFeed = function (feed, subdomain) {
     };
 };
 
-var substackFeedUrl = function (subdomain) {
-    return "https://".concat(subdomain, ".substack.com/feed");
-};
+var proxyBaseUrl = process.env.PROXY_URL;
+var proxyUrl = function (subdomain) { return "".concat(proxyBaseUrl, "/").concat(subdomain); };
 /**
  * Get the raw XML feed for any substack
  */
@@ -201,13 +200,7 @@ var getFeed = function (url) { return __awaiter(void 0, void 0, void 0, function
     var res;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                if (!url.startsWith('https://')) {
-                    throw new Error('invalid URL passed');
-                }
-                return [4 /*yield*/, fetch(url, {
-                        mode: 'cors'
-                    })];
+            case 0: return [4 /*yield*/, fetch(url)];
             case 1:
                 res = _a.sent();
                 return [4 /*yield*/, res.text()];
@@ -220,7 +213,7 @@ var getAndParseSubstack = function (subdomain) { return __awaiter(void 0, void 0
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                url = substackFeedUrl(subdomain);
+                url = proxyUrl(subdomain);
                 return [4 /*yield*/, getFeed(url)];
             case 1:
                 feed = _a.sent();
@@ -239,8 +232,9 @@ var useSubstack = function (subdomain) {
     var _b = useState(), error = _b[0], setError = _b[1];
     var _c = useState('ready'), state = _c[0], setState = _c[1];
     useEffect(function () {
-        if (state === 'loading' || requestLock.current)
+        if (state === 'loading' || requestLock.current) {
             return;
+        }
         if (subdomain === '') {
             setError('A valid substack subdomain is required');
             return;
@@ -266,5 +260,5 @@ var useSubstack = function (subdomain) {
     return __assign(__assign({}, substack), { state: state, error: error });
 };
 
-export { getAndParseSubstack, getFeed, substackFeedUrl, useSubstack };
+export { getAndParseSubstack, getFeed, proxyUrl, useSubstack };
 //# sourceMappingURL=index.js.map
