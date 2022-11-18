@@ -1,16 +1,14 @@
 import { parseFeed } from './parser';
 import type { Substack } from './parser/types';
 
-export const proxyUrl = (subdomain: string) =>
-  `https://${subdomain}.substack.com/feed`;
+const proxyBaseUrl = process.env.PROXY_URL;
+
+export const proxyUrl = (subdomain: string) => `${proxyBaseUrl}/${subdomain}`;
 
 /**
  * Get the raw XML feed for any substack
  */
 export const getFeed = async (url: string) => {
-  if (!url.startsWith('https://')) {
-    throw new Error('invalid URL passed');
-  }
   const res = await fetch(url);
   return await res.text();
 };

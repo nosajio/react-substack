@@ -25,8 +25,4 @@ describe('getFeed', () => {
     expect(typeof feed).toEqual('string');
     expect(feed.length).toBeGreaterThan(1);
   });
-
-  it('throws when a invalid URL is passed', async () => {
-    await expect(getFeed('')).rejects.toThrow();
-  });
 });
