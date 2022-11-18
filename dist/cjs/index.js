@@ -208,7 +208,7 @@ var getFeed = function (url) { return __awaiter(void 0, void 0, void 0, function
                     throw new Error('invalid URL passed');
                 }
                 return [4 /*yield*/, fetch(url, {
-                        mode: 'no-cors',
+                        mode: 'cors'
                     })];
             case 1:
                 res = _a.sent();

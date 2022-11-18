@@ -11,7 +11,7 @@ import {
 
 describe('Builders fns', () => {
   describe('newParagraph', () => {
-    const innerValue = `<strong>Hello</strong> world`;
+    const innerValue = '<strong>Hello</strong> world';
     let el: Element;
 
     beforeAll(() => {

@@ -1,12 +1,21 @@
-import { getFeed, substackFeedUrl } from '../utils';
+import example from '../mock/example';
+import { getFeed, proxyUrl } from '../utils';
 
 let url: string;
 let feed: string;
+const proxyBaseUrl = process.env.PROXY_URL;
+
+// @ts-ignore
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    text: () => Promise.resolve(example()),
+  }),
+);
 
 describe('substackFeedUrl', () => {
   it('returns a full RSS feed URL containing passed subdomain string', () => {
-    url = substackFeedUrl('example');
-    expect(url).toEqual('https://example.substack.com/feed');
+    url = proxyUrl('example');
+    expect(url).toEqual(`${proxyBaseUrl}/example`);
   });
 });
 

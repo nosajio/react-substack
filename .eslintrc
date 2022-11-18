@@ -9,5 +9,5 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": { "project": ["./tsconfig.json"] },
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
-  "ignorePatterns": ["src/**/*.test.ts", "rollup.config.js", "dist"]
+  "ignorePatterns": ["**/__tests__/*", "**/mock/*", "rollup.config.js", "dist"]
 }

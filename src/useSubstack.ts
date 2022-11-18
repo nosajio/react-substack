@@ -19,7 +19,9 @@ export const useSubstack = (subdomain: string): UseSubstackValue => {
   const [state, setState] = useState<UseSubstackStates>('ready');
 
   useEffect(() => {
-    if (state === 'loading' || requestLock.current) return;
+    if (state === 'loading' || requestLock.current) {
+      return;
+    }
     if (subdomain === '') {
       setError('A valid substack subdomain is required');
       return;

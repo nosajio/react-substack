@@ -1,7 +1,7 @@
 import { parseFeed } from './parser';
 import type { Substack } from './parser/types';
 
-export const substackFeedUrl = (subdomain: string) =>
+export const proxyUrl = (subdomain: string) =>
   `https://${subdomain}.substack.com/feed`;
 
 /**
@@ -11,16 +11,14 @@ export const getFeed = async (url: string) => {
   if (!url.startsWith('https://')) {
     throw new Error('invalid URL passed');
   }
-  const res = await fetch(url, {
-    mode: 'no-cors',
-  });
+  const res = await fetch(url);
   return await res.text();
 };
 
 export const getAndParseSubstack = async (
   subdomain: string,
 ): Promise<Substack> => {
-  const url = substackFeedUrl(subdomain);
+  const url = proxyUrl(subdomain);
   const feed = await getFeed(url);
   const substack = parseFeed(feed, subdomain);
   return substack;
