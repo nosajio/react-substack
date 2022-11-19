@@ -157,18 +157,30 @@ var parseBody = function (rawBodyHTML) {
     var body = bodyRaw.filter(Boolean);
     return body;
 };
+var getSlugFromUrl = function (url) {
+    if (url.endsWith('/')) {
+        url = url.slice(0, -1);
+    }
+    var parts = url.split('/');
+    return parts[parts.length - 1];
+};
 var parseItemElement = function (el) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
     var titleRaw = (_b = (_a = el.querySelector('title')) === null || _a === void 0 ? void 0 : _a.innerHTML) !== null && _b !== void 0 ? _b : '';
     var descriptionRaw = (_d = (_c = el.querySelector('description')) === null || _c === void 0 ? void 0 : _c.innerHTML) !== null && _d !== void 0 ? _d : '';
     var linkRaw = (_f = (_e = el.querySelector('link')) === null || _e === void 0 ? void 0 : _e.innerHTML) !== null && _f !== void 0 ? _f : '';
     var pubDateRaw = (_h = (_g = el.querySelector('pubDate')) === null || _g === void 0 ? void 0 : _g.innerHTML) !== null && _h !== void 0 ? _h : '';
-    var creatorRaw = (_k = (_j = el.querySelector('creator')) === null || _j === void 0 ? void 0 : _j.innerHTML) !== null && _k !== void 0 ? _k : '';
-    var cover = ((_l = el.querySelector('enclosure')) === null || _l === void 0 ? void 0 : _l.getAttribute('url')) || undefined;
-    var contentRaw = (_o = (_m = el.querySelector('encoded')) === null || _m === void 0 ? void 0 : _m.innerHTML) !== null && _o !== void 0 ? _o : '';
-    var _p = parseCDATA(titleRaw, descriptionRaw, creatorRaw, contentRaw), title = _p[0], description = _p[1], author = _p[2], content = _p[3];
+    var cover = ((_j = el.querySelector('enclosure')) === null || _j === void 0 ? void 0 : _j.getAttribute('url')) || undefined;
+    var slug = getSlugFromUrl(linkRaw);
+    // These coalescing selectors are necessary to make tests pass. For some reason
+    // jsdom needs the namespace (string before the colon), while browsers don't
+    // seem to care.
+    var creatorRaw = (_o = (_l = (_k = el.querySelector('creator')) === null || _k === void 0 ? void 0 : _k.innerHTML) !== null && _l !== void 0 ? _l : (_m = el.querySelector('dc\\:creator')) === null || _m === void 0 ? void 0 : _m.innerHTML) !== null && _o !== void 0 ? _o : '';
+    var contentRaw = (_s = (_q = (_p = el.querySelector('encoded')) === null || _p === void 0 ? void 0 : _p.innerHTML) !== null && _q !== void 0 ? _q : (_r = el.querySelector('content\\:encoded')) === null || _r === void 0 ? void 0 : _r.innerHTML) !== null && _s !== void 0 ? _s : '';
+    var _t = parseCDATA(titleRaw, descriptionRaw, creatorRaw, contentRaw), title = _t[0], description = _t[1], author = _t[2], content = _t[3];
     var body = parseBody(content);
     return {
+        slug: slug,
         title: title,
         description: description,
         author: author,
