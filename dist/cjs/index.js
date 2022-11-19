@@ -282,11 +282,38 @@ var useSubstack = function (subdomain) {
         }); };
         getSubstack();
     }, [state, subdomain]);
-    return __assign(__assign({}, substack), { state: state, error: error });
+    return __assign(__assign({}, substack), { state: error ? 'error' : state, error: error });
+};
+/**
+ * Returns a single post from a substack newsletter
+ */
+var usePost = function (subdomain, slug) {
+    var substack = useSubstack(subdomain);
+    var _a = react.useState(), post = _a[0], setPost = _a[1];
+    var _b = react.useState(), error = _b[0], setError = _b[1];
+    react.useEffect(function () {
+        if (!Array.isArray(substack === null || substack === void 0 ? void 0 : substack.posts) || substack.posts.length === 0) {
+            return;
+        }
+        var foundPost = substack.posts.find(function (p) { return p.slug === slug; });
+        if (!foundPost) {
+            setError('Post not found');
+            return;
+        }
+        setPost(foundPost);
+    }, [slug, substack.posts]);
+    var errorState = error || substack.error;
+    var state = errorState ? 'error' : post === undefined ? 'loading' : 'data';
+    return {
+        post: post,
+        state: state,
+        error: errorState,
+    };
 };
 
 exports.getAndParseSubstack = getAndParseSubstack;
 exports.getFeed = getFeed;
 exports.proxyUrl = proxyUrl;
+exports.usePost = usePost;
 exports.useSubstack = useSubstack;
 //# sourceMappingURL=index.js.map
