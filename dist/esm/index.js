@@ -106,6 +106,11 @@ var newHeading = function (el) {
         contents: contents,
     };
 };
+var newHr = function (el) {
+    return {
+        type: NodeType.HR,
+    };
+};
 var parseCDATA = function () {
     var rawStr = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -122,15 +127,19 @@ var parseCDATA = function () {
     });
 };
 var parseBody = function (rawBodyHTML) {
-    var dom = new DOMParser().parseFromString("<div>".concat(rawBodyHTML, "</div>"), 'text/html');
-    var units = Array.from(dom.children);
+    var dom = new DOMParser().parseFromString(rawBodyHTML, 'text/html');
+    var units = Array.from(dom.body.children);
     var bodyRaw = units.map(function (el) {
+        var _a;
         switch (el.tagName) {
             case 'P':
                 return newParagraph(el);
-            case 'div': {
+            case 'DIV': {
                 if (el.classList.contains('captioned-image-container')) {
                     return newImage(el);
+                }
+                if (((_a = el.children) === null || _a === void 0 ? void 0 : _a[0]) && el.children[0].tagName === 'HR') {
+                    return newHr();
                 }
                 return undefined;
             }
@@ -191,7 +200,7 @@ var parseFeed = function (feed, subdomain) {
     };
 };
 
-var proxyBaseUrl = process.env.PROXY_URL;
+var proxyBaseUrl = 'http://localhost:3909';
 var proxyUrl = function (subdomain) { return "".concat(proxyBaseUrl, "/").concat(subdomain); };
 /**
  * Get the raw XML feed for any substack
@@ -200,7 +209,9 @@ var getFeed = function (url) { return __awaiter(void 0, void 0, void 0, function
     var res;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch(url)];
+            case 0: return [4 /*yield*/, fetch(url, {
+                    mode: 'cors',
+                })];
             case 1:
                 res = _a.sent();
                 return [4 /*yield*/, res.text()];

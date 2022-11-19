@@ -5,30 +5,30 @@ export declare enum NodeType {
     HR = "hr",
     HEADING = "heading"
 }
-export declare type ParagraphNode = {
+export type ParagraphNode = {
     type: NodeType.PARAGRAPH;
     contents?: string;
 };
-export declare type ImageNode = {
+export type ImageNode = {
     type: NodeType.IMAGE;
     caption?: string;
     src: string;
 };
-export declare type VideoNode = {
+export type VideoNode = {
     type: NodeType.VIDEO;
     src: string;
 };
-export declare type HrNode = {
+export type HrNode = {
     type: NodeType.HR;
 };
-export declare type HeadingNode = {
+export type HeadingNode = {
     type: NodeType.HEADING;
     level: number;
     contents?: string;
 };
-export declare type BodyNode = ParagraphNode | ImageNode | VideoNode | HrNode | HeadingNode;
-export declare type PostBody = BodyNode[];
-export declare type Post = {
+export type BodyNode = ParagraphNode | ImageNode | VideoNode | HrNode | HeadingNode;
+export type PostBody = BodyNode[];
+export type Post = {
     pubdate: string;
     title: string;
     link: string;
@@ -37,7 +37,7 @@ export declare type Post = {
     cover?: string;
     author?: string;
 };
-export declare type Substack = {
+export type Substack = {
     url: string;
     subdomain: string;
     posts: Post[];
