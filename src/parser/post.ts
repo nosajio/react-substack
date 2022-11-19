@@ -1,6 +1,7 @@
 import {
   BodyNode,
   HeadingNode,
+  HrNode,
   ImageNode,
   NodeType,
   ParagraphNode,
@@ -45,6 +46,12 @@ export const newHeading: BuilderFn<HeadingNode> = (el) => {
   };
 };
 
+export const newHr: BuilderFn<HrNode> = (el) => {
+  return {
+    type: NodeType.HR,
+  };
+};
+
 export const parseCDATA = (...rawStr: string[]) => {
   const exp = /!\[CDATA\[(.+)\]\]/m;
   return rawStr.map((s) => {
@@ -57,20 +64,20 @@ export const parseCDATA = (...rawStr: string[]) => {
   });
 };
 
-const parseBody = (rawBodyHTML: string) => {
-  const dom = new DOMParser().parseFromString(
-    `<div>${rawBodyHTML}</div>`,
-    'text/html',
-  );
+export const parseBody = (rawBodyHTML: string) => {
+  const dom = new DOMParser().parseFromString(rawBodyHTML, 'text/html');
+  const units = Array.from(dom.body.children);
 
-  const units = Array.from(dom.children);
   const bodyRaw = units.map((el) => {
     switch (el.tagName) {
       case 'P':
         return newParagraph(el);
-      case 'div': {
+      case 'DIV': {
         if (el.classList.contains('captioned-image-container')) {
           return newImage(el);
+        }
+        if (el.children?.[0] && el.children[0].tagName === 'HR') {
+          return newHr(el);
         }
         return undefined;
       }

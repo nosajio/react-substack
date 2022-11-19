@@ -1,7 +1,7 @@
 import { parseFeed } from './parser';
 import type { Substack } from './parser/types';
 
-const proxyBaseUrl = process.env.PROXY_URL;
+const proxyBaseUrl = 'http://localhost:3909';
 
 export const proxyUrl = (subdomain: string) => `${proxyBaseUrl}/${subdomain}`;
 
@@ -9,7 +9,9 @@ export const proxyUrl = (subdomain: string) => `${proxyBaseUrl}/${subdomain}`;
  * Get the raw XML feed for any substack
  */
 export const getFeed = async (url: string) => {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    mode: 'cors',
+  });
   return await res.text();
 };
 

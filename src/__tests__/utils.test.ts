@@ -3,7 +3,7 @@ import { getFeed, proxyUrl } from '../utils';
 
 let url: string;
 let feed: string;
-const proxyBaseUrl = process.env.PROXY_URL;
+const proxyBaseUrl = 'http://localhost:3909';
 
 // @ts-ignore
 global.fetch = jest.fn(() =>
