@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import type { Substack } from './parser';
+import { useEffect, useRef, useState } from 'react';
+import type { Post, Substack } from './parser';
 import { getAndParseSubstack } from './utils';
 
 type UseSubstackValue = Partial<Substack> & {
@@ -7,7 +7,7 @@ type UseSubstackValue = Partial<Substack> & {
   error?: string;
 };
 
-type UseSubstackStates = 'loading' | 'ready' | 'data';
+type UseSubstackStates = 'loading' | 'ready' | 'data' | 'error';
 
 /**
  * Returns any substack newsletter as JSON
@@ -38,7 +38,43 @@ export const useSubstack = (subdomain: string): UseSubstackValue => {
 
   return {
     ...substack,
-    state,
+    state: error ? 'error' : state,
     error,
+  };
+};
+
+type UsePostValue = {
+  state: UseSubstackStates;
+  error?: string;
+  post?: Post;
+};
+
+/**
+ * Returns a single post from a substack newsletter
+ */
+export const usePost = (subdomain: string, slug: string): UsePostValue => {
+  const substack = useSubstack(subdomain);
+  const [post, setPost] = useState<Post>();
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    if (!Array.isArray(substack?.posts) || substack.posts.length === 0) {
+      return;
+    }
+    const foundPost = substack.posts.find((p) => p.slug === slug);
+    if (!foundPost) {
+      setError('Post not found');
+      return;
+    }
+    setPost(foundPost);
+  }, [slug, substack.posts]);
+
+  const errorState = error || substack.error;
+  const state = errorState ? 'error' : post === undefined ? 'loading' : 'data';
+
+  return {
+    post,
+    state,
+    error: errorState,
   };
 };
