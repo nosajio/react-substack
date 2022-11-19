@@ -163,9 +163,9 @@ var parseItemElement = function (el) {
     var descriptionRaw = (_d = (_c = el.querySelector('description')) === null || _c === void 0 ? void 0 : _c.innerHTML) !== null && _d !== void 0 ? _d : '';
     var linkRaw = (_f = (_e = el.querySelector('link')) === null || _e === void 0 ? void 0 : _e.innerHTML) !== null && _f !== void 0 ? _f : '';
     var pubDateRaw = (_h = (_g = el.querySelector('pubDate')) === null || _g === void 0 ? void 0 : _g.innerHTML) !== null && _h !== void 0 ? _h : '';
-    var creatorRaw = (_k = (_j = el.querySelector('dc\\:creator')) === null || _j === void 0 ? void 0 : _j.innerHTML) !== null && _k !== void 0 ? _k : '';
+    var creatorRaw = (_k = (_j = el.querySelector('creator')) === null || _j === void 0 ? void 0 : _j.innerHTML) !== null && _k !== void 0 ? _k : '';
     var cover = ((_l = el.querySelector('enclosure')) === null || _l === void 0 ? void 0 : _l.getAttribute('url')) || undefined;
-    var contentRaw = (_o = (_m = el.querySelector('content\\:encoded')) === null || _m === void 0 ? void 0 : _m.innerHTML) !== null && _o !== void 0 ? _o : '';
+    var contentRaw = (_o = (_m = el.querySelector('encoded')) === null || _m === void 0 ? void 0 : _m.innerHTML) !== null && _o !== void 0 ? _o : '';
     var _p = parseCDATA(titleRaw, descriptionRaw, creatorRaw, contentRaw), title = _p[0], description = _p[1], author = _p[2], content = _p[3];
     var body = parseBody(content);
     return {

@@ -77,7 +77,7 @@ describe('Builder fns', () => {
       expect(node).toHaveProperty('caption');
     });
 
-    it('passes content from HTML to Node', () => {
+    it('passes src and caption from HTML to Node', () => {
       expect(node?.src).toBe(src);
       expect(node?.caption).toBe(caption);
     });

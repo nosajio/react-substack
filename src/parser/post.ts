@@ -100,9 +100,9 @@ export const parseItemElement = (el: Element): Post => {
   const descriptionRaw = el.querySelector('description')?.innerHTML ?? '';
   const linkRaw = el.querySelector('link')?.innerHTML ?? '';
   const pubDateRaw = el.querySelector('pubDate')?.innerHTML ?? '';
-  const creatorRaw = el.querySelector('dc\\:creator')?.innerHTML ?? '';
+  const creatorRaw = el.querySelector('creator')?.innerHTML ?? '';
   const cover = el.querySelector('enclosure')?.getAttribute('url') || undefined;
-  const contentRaw = el.querySelector('content\\:encoded')?.innerHTML ?? '';
+  const contentRaw = el.querySelector('encoded')?.innerHTML ?? '';
 
   const [title, description, author, content] = parseCDATA(
     titleRaw,
