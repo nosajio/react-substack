@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import example from '../mock/example';
 import {
   HeadingNode,
   HrNode,
@@ -11,7 +12,11 @@ import {
   NodeType,
   ParagraphNode,
   parseBody,
+  parseFeed,
+  parseItemElement,
+  Post,
   PostBody,
+  Substack,
 } from '../parser';
 
 describe('Builder fns', () => {
@@ -121,6 +126,80 @@ describe('Builder fns', () => {
       expect(node1?.level).toBe(1);
       expect(node2?.level).toBe(2);
     });
+  });
+});
+
+describe('parseFeed', () => {
+  let feed: Substack;
+  beforeAll(() => {
+    feed = parseFeed(example(), 'nosaj');
+  });
+
+  it('parses the about string', () => {
+    expect(feed.about).toBe(
+      'A newsletter about the art of building valuable products and startups. For founders, engineers, and curious minds.',
+    );
+  });
+
+  it('parses the publication image', () => {
+    expect(feed.image).toBe(
+      'https://substackcdn.com/image/fetch/w_256,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fnosaj.substack.com%2Fimg%2Fsubstack.png',
+    );
+  });
+
+  it('parses the subdomain', () => {
+    expect(feed.subdomain).toBe('nosaj');
+  });
+
+  it('parses the title', () => {
+    expect(feed.title).toBe('Foundations');
+  });
+
+  it('parses the URL', () => {
+    expect(feed.url).toBe('https://nosaj.substack.com');
+  });
+
+  it('parses all posts', () => {
+    expect(feed.posts).toHaveLength(5);
+  });
+});
+
+describe('parseItemElement', () => {
+  let post: Post;
+
+  beforeAll(() => {
+    const xml = example();
+    const dom = new DOMParser().parseFromString(xml, 'text/xml');
+    const items = dom.querySelectorAll('channel > item');
+    post = parseItemElement(items[0]);
+  });
+
+  it('parses the author', () => {
+    expect(post.author).toBe('Jason');
+  });
+
+  it('parses cover', () => {
+    expect(post.cover).toBe('https://substackcdn.com/image/fetch/h_600,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2F139556c2-f22d-4283-9372-87348c44d8d5_2000x800.jpeg');
+  });
+
+  it('parses description', () => {
+    expect(post.description).toBe('What makes Twitter uniquely equipped to win.');
+  });
+
+  it('parses link', () => {
+    expect(post.link).toBe('https://nosaj.substack.com/p/why-twitter-deserves-to-live');
+  });
+
+  it('parses publish date', () => {
+    expect(post.pubdate).toBe('Fri, 11 Nov 2022 14:37:05 GMT');
+  });
+
+  it('parses publish title', () => {
+    expect(post.title).toBe('Why Twitter Deserves to Live');
+  });
+
+  it('has the expected number of body nodes', () => {
+    expect(post.body).toHaveLength(19);
   });
 });
 

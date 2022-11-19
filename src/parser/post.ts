@@ -53,7 +53,7 @@ export const newHr: BuilderFn<HrNode> = (el) => {
 };
 
 export const parseCDATA = (...rawStr: string[]) => {
-  const exp = /!\[CDATA\[(.+)\]\]/m;
+  const exp = /!\[CDATA\[(.+)\]\]/s;
   return rawStr.map((s) => {
     const m = exp.exec(s);
     if (!m || m.length < 2) {
@@ -100,7 +100,7 @@ export const parseItemElement = (el: Element): Post => {
   const descriptionRaw = el.querySelector('description')?.innerHTML ?? '';
   const linkRaw = el.querySelector('link')?.innerHTML ?? '';
   const pubDateRaw = el.querySelector('pubDate')?.innerHTML ?? '';
-  const creatorRaw = el.querySelector('creator')?.innerHTML ?? '';
+  const creatorRaw = el.querySelector('dc\\:creator')?.innerHTML ?? '';
   const cover = el.querySelector('enclosure')?.getAttribute('url') || undefined;
   const contentRaw = el.querySelector('content\\:encoded')?.innerHTML ?? '';
 
