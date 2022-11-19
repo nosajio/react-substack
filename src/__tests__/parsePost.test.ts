@@ -174,6 +174,10 @@ describe('parseItemElement', () => {
     post = parseItemElement(items[0]);
   });
 
+  it('parses the slug (end of URL)', () => {
+    expect(post.slug).toBe('why-twitter-deserves-to-live');
+  });
+
   it('parses the author', () => {
     expect(post.author).toBe('Jason');
   });

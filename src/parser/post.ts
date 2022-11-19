@@ -95,14 +95,33 @@ export const parseBody = (rawBodyHTML: string) => {
   return body;
 };
 
+const getSlugFromUrl = (url: string) => {
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  const parts = url.split('/');
+  return parts[parts.length - 1];
+};
+
 export const parseItemElement = (el: Element): Post => {
   const titleRaw = el.querySelector('title')?.innerHTML ?? '';
   const descriptionRaw = el.querySelector('description')?.innerHTML ?? '';
   const linkRaw = el.querySelector('link')?.innerHTML ?? '';
   const pubDateRaw = el.querySelector('pubDate')?.innerHTML ?? '';
-  const creatorRaw = el.querySelector('creator')?.innerHTML ?? '';
   const cover = el.querySelector('enclosure')?.getAttribute('url') || undefined;
-  const contentRaw = el.querySelector('encoded')?.innerHTML ?? '';
+  const slug = getSlugFromUrl(linkRaw);
+
+  // These coalescing selectors are necessary to make tests pass. For some reason
+  // jsdom needs the namespace (string before the colon), while browsers don't
+  // seem to care.
+  const creatorRaw =
+    el.querySelector('creator')?.innerHTML ??
+    el.querySelector('dc\\:creator')?.innerHTML ??
+    '';
+  const contentRaw =
+    el.querySelector('encoded')?.innerHTML ??
+    el.querySelector('content\\:encoded')?.innerHTML ??
+    '';
 
   const [title, description, author, content] = parseCDATA(
     titleRaw,
@@ -114,6 +133,7 @@ export const parseItemElement = (el: Element): Post => {
   const body = parseBody(content);
 
   return {
+    slug,
     title,
     description,
     author,

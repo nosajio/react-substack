@@ -49,6 +49,7 @@ export type Post = {
   description?: string;
   cover?: string;
   author?: string;
+  slug: string;
 };
 
 export type Substack = {
