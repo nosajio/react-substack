@@ -66,21 +66,21 @@ function __generator(thisArg, body) {
     }
 }
 
-var NodeType;
+exports.NodeType = void 0;
 (function (NodeType) {
     NodeType["PARAGRAPH"] = "paragraph";
     NodeType["IMAGE"] = "image";
     NodeType["VIDEO"] = "video";
     NodeType["HR"] = "hr";
     NodeType["HEADING"] = "heading";
-})(NodeType || (NodeType = {}));
+})(exports.NodeType || (exports.NodeType = {}));
 
 var newParagraph = function (el) {
     var contents = el.innerHTML;
     if (!contents)
         return undefined;
     return {
-        type: NodeType.PARAGRAPH,
+        type: exports.NodeType.PARAGRAPH,
         contents: contents,
     };
 };
@@ -92,7 +92,7 @@ var newImage = function (el) {
     var captionEl = el.querySelector('figcaption');
     var caption = captionEl ? captionEl.innerHTML : undefined;
     return {
-        type: NodeType.IMAGE,
+        type: exports.NodeType.IMAGE,
         src: src,
         caption: caption,
     };
@@ -103,14 +103,14 @@ var newHeading = function (el) {
     if (!contents)
         return undefined;
     return {
-        type: NodeType.HEADING,
+        type: exports.NodeType.HEADING,
         level: level,
         contents: contents,
     };
 };
-var newHr = function (el) {
+var newHr = function () {
     return {
-        type: NodeType.HR,
+        type: exports.NodeType.HR,
     };
 };
 var parseCDATA = function () {
@@ -311,9 +311,6 @@ var usePost = function (subdomain, slug) {
     };
 };
 
-exports.getAndParseSubstack = getAndParseSubstack;
-exports.getFeed = getFeed;
-exports.proxyUrl = proxyUrl;
 exports.usePost = usePost;
 exports.useSubstack = useSubstack;
 //# sourceMappingURL=index.js.map

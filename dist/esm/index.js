@@ -106,7 +106,7 @@ var newHeading = function (el) {
         contents: contents,
     };
 };
-var newHr = function (el) {
+var newHr = function () {
     return {
         type: NodeType.HR,
     };
@@ -309,5 +309,5 @@ var usePost = function (subdomain, slug) {
     };
 };
 
-export { getAndParseSubstack, getFeed, proxyUrl, usePost, useSubstack };
+export { NodeType, usePost, useSubstack };
 //# sourceMappingURL=index.js.map

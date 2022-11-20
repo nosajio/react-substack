@@ -46,7 +46,7 @@ export const newHeading: BuilderFn<HeadingNode> = (el) => {
   };
 };
 
-export const newHr: BuilderFn<HrNode> = (el) => {
+export const newHr: BuilderFn<HrNode> = () => {
   return {
     type: NodeType.HR,
   };
