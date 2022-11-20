@@ -35,7 +35,7 @@ export type HeadingNode = {
 export type BodyNode =
   | ParagraphNode
   | ImageNode
-  | VideoNode
+  // | VideoNode
   | HrNode
   | HeadingNode;
 
@@ -46,6 +46,7 @@ export type Post = {
   title: string;
   link: string;
   body: PostBody;
+  bodyHTML: string;
   description?: string;
   cover?: string;
   author?: string;

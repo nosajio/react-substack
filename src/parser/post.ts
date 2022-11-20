@@ -6,8 +6,10 @@ import {
   NodeType,
   ParagraphNode,
   Post,
-  PostBody,
+  PostBody
 } from './types';
+
+// const decodeHTMLEntities = (html: string) => {};
 
 interface BuilderFn<T extends BodyNode> {
   (el: Element): T | undefined;
@@ -64,7 +66,33 @@ export const parseCDATA = (...rawStr: string[]) => {
   });
 };
 
-export const parseBody = (rawBodyHTML: string) => {
+/**
+ * Take a parsed node list and re-compose a HTML string. This is handy for
+ * injecting a post's HTML directly with dangerouslySetHTML.
+ */
+const recomposeHTML = (nodes: PostBody): string =>
+  nodes
+    .map((n) => {
+      switch (n.type) {
+        case NodeType.PARAGRAPH:
+          return `<p>${n.contents}</p>`;
+        case NodeType.HEADING:
+          return `<h${n.level}>${n.contents}</h${n.level}>`;
+        case NodeType.IMAGE:
+          return `<figure class="post-image"><img src="${n.src}"/>${
+            n.caption ? `<figcaption>${n.caption}</figcaption>` : ''
+          }</figure>`;
+        case NodeType.HR:
+          return '<hr />';
+        default:
+          return '';
+      }
+    })
+    .join('\n');
+
+export const parseBody = (
+  rawBodyHTML: string,
+): { nodes: PostBody; html: string } => {
   const dom = new DOMParser().parseFromString(rawBodyHTML, 'text/html');
   const units = Array.from(dom.body.children);
 
@@ -91,8 +119,15 @@ export const parseBody = (rawBodyHTML: string) => {
   });
 
   // Remove all undefined elements from map
-  const body = bodyRaw.filter(Boolean) as PostBody;
-  return body;
+  const nodes = bodyRaw.filter(Boolean) as PostBody;
+
+  // Recompose natural HTML
+  const html = recomposeHTML(nodes);
+
+  return {
+    nodes,
+    html,
+  };
 };
 
 const getSlugFromUrl = (url: string) => {
@@ -130,7 +165,7 @@ export const parseItemElement = (el: Element): Post => {
     contentRaw,
   );
 
-  const body = parseBody(content);
+  const { nodes: body, html: bodyHTML } = parseBody(content);
 
   return {
     slug,
@@ -140,6 +175,7 @@ export const parseItemElement = (el: Element): Post => {
     pubdate: pubDateRaw,
     link: linkRaw,
     cover,
+    bodyHTML,
     body,
   };
 };
