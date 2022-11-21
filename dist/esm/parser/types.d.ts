@@ -7,7 +7,7 @@ export declare enum NodeType {
 }
 export type ParagraphNode = {
     type: NodeType.PARAGRAPH;
-    contents?: string;
+    contents: string;
 };
 export type ImageNode = {
     type: NodeType.IMAGE;
@@ -24,15 +24,16 @@ export type HrNode = {
 export type HeadingNode = {
     type: NodeType.HEADING;
     level: number;
-    contents?: string;
+    contents: string;
 };
-export type BodyNode = ParagraphNode | ImageNode | VideoNode | HrNode | HeadingNode;
+export type BodyNode = ParagraphNode | ImageNode | HrNode | HeadingNode;
 export type PostBody = BodyNode[];
 export type Post = {
     pubdate: string;
     title: string;
     link: string;
     body: PostBody;
+    bodyHTML: string;
     description?: string;
     cover?: string;
     author?: string;

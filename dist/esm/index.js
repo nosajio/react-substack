@@ -126,6 +126,28 @@ var parseCDATA = function () {
         return m[1].trim();
     });
 };
+/**
+ * Take a parsed node list and re-compose a HTML string. This is handy for
+ * injecting a post's HTML directly with dangerouslySetHTML.
+ */
+var recomposeHTML = function (nodes) {
+    return nodes
+        .map(function (n) {
+        switch (n.type) {
+            case NodeType.PARAGRAPH:
+                return "<p>".concat(n.contents, "</p>");
+            case NodeType.HEADING:
+                return "<h".concat(n.level, ">").concat(n.contents, "</h").concat(n.level, ">");
+            case NodeType.IMAGE:
+                return "<figure class=\"post-image\"><img src=\"".concat(n.src, "\"/>").concat(n.caption ? "<figcaption>".concat(n.caption, "</figcaption>") : '', "</figure>");
+            case NodeType.HR:
+                return '<hr />';
+            default:
+                return '';
+        }
+    })
+        .join('\n');
+};
 var parseBody = function (rawBodyHTML) {
     var dom = new DOMParser().parseFromString(rawBodyHTML, 'text/html');
     var units = Array.from(dom.body.children);
@@ -152,8 +174,13 @@ var parseBody = function (rawBodyHTML) {
         }
     });
     // Remove all undefined elements from map
-    var body = bodyRaw.filter(Boolean);
-    return body;
+    var nodes = bodyRaw.filter(Boolean);
+    // Recompose natural HTML
+    var html = recomposeHTML(nodes);
+    return {
+        nodes: nodes,
+        html: html,
+    };
 };
 var getSlugFromUrl = function (url) {
     if (url.endsWith('/')) {
@@ -176,7 +203,7 @@ var parseItemElement = function (el) {
     var creatorRaw = (_o = (_l = (_k = el.querySelector('creator')) === null || _k === void 0 ? void 0 : _k.innerHTML) !== null && _l !== void 0 ? _l : (_m = el.querySelector('dc\\:creator')) === null || _m === void 0 ? void 0 : _m.innerHTML) !== null && _o !== void 0 ? _o : '';
     var contentRaw = (_s = (_q = (_p = el.querySelector('encoded')) === null || _p === void 0 ? void 0 : _p.innerHTML) !== null && _q !== void 0 ? _q : (_r = el.querySelector('content\\:encoded')) === null || _r === void 0 ? void 0 : _r.innerHTML) !== null && _s !== void 0 ? _s : '';
     var _t = parseCDATA(titleRaw, descriptionRaw, creatorRaw, contentRaw), title = _t[0], description = _t[1], author = _t[2], content = _t[3];
-    var body = parseBody(content);
+    var _u = parseBody(content), body = _u.nodes, bodyHTML = _u.html;
     return {
         slug: slug,
         title: title,
@@ -185,6 +212,7 @@ var parseItemElement = function (el) {
         pubdate: pubDateRaw,
         link: linkRaw,
         cover: cover,
+        bodyHTML: bodyHTML,
         body: body,
     };
 };
