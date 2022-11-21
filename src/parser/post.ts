@@ -9,8 +9,6 @@ import {
   PostBody
 } from './types';
 
-// const decodeHTMLEntities = (html: string) => {};
-
 interface BuilderFn<T extends BodyNode> {
   (el: Element): T | undefined;
 }

@@ -8,7 +8,7 @@ export enum NodeType {
 
 export type ParagraphNode = {
   type: NodeType.PARAGRAPH;
-  contents?: string;
+  contents: string;
 };
 
 export type ImageNode = {
@@ -29,7 +29,7 @@ export type HrNode = {
 export type HeadingNode = {
   type: NodeType.HEADING;
   level: number;
-  contents?: string;
+  contents: string;
 };
 
 export type BodyNode =
