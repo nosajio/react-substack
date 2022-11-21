@@ -6,18 +6,39 @@ import {
   NodeType,
   ParagraphNode,
   Post,
-  PostBody
+  PostBody,
 } from './types';
 
-// const decodeHTMLEntities = (html: string) => {};
+// Keep tempEl out of scope so that it can be reused. No need to create and
+// destroy multiple elements to decode characters
+let tempEl: HTMLDivElement;
+const decodeEntity = (entity: string) => {
+  if (!tempEl) {
+    tempEl = document.createElement('div');
+  }
+  tempEl.innerHTML = entity;
+  const decoded = tempEl.textContent;
+  tempEl.innerHTML = ''; // reset element
+  return decoded || entity;
+};
+
+/**
+ * Replaces HTML entities with the decoded character. Should preserve all other
+ * HTML in the string.
+ */
+export const surgicallyDecodeHTMLEntities = (html: string) => {
+  const htmlCodePattern = /(&[#a-z0-9]*?;)/gi;
+  return html.replace(htmlCodePattern, (substr) => decodeEntity(substr));
+};
 
 interface BuilderFn<T extends BodyNode> {
   (el: Element): T | undefined;
 }
 
 export const newParagraph: BuilderFn<ParagraphNode> = (el) => {
-  const contents = el.innerHTML;
-  if (!contents) return undefined;
+  const html = el.innerHTML;
+  if (!html) return undefined;
+  const contents = surgicallyDecodeHTMLEntities(html);
   return {
     type: NodeType.PARAGRAPH,
     contents,
@@ -39,8 +60,9 @@ export const newImage: BuilderFn<ImageNode> = (el) => {
 
 export const newHeading: BuilderFn<HeadingNode> = (el) => {
   const level = parseInt(el.nodeName[1]);
-  const contents = el.innerHTML;
-  if (!contents) return undefined;
+  const html = el.innerHTML;
+  if (!html) return undefined;
+  const contents = surgicallyDecodeHTMLEntities(html);
   return {
     type: NodeType.HEADING,
     level,

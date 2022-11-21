@@ -17,7 +17,20 @@ import {
   Post,
   PostBody,
   Substack,
+  surgicallyDecodeHTMLEntities,
 } from '../parser';
+
+describe('surgicallyDecodeHTMLEntities', () => {
+  it('replaces &amp; style entities', () => {
+    const str = surgicallyDecodeHTMLEntities('hello &amp; world');
+    expect(str).toBe('hello & world');
+  });
+
+  it('preserves HTML tags like <strong>...</strong>', () => {
+    const str = surgicallyDecodeHTMLEntities('<em>hello &amp;</em> world');
+    expect(str).toBe('<em>hello &</em> world');
+  });
+});
 
 describe('Builder fns', () => {
   describe('newParagraph', () => {
