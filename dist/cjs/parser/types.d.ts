@@ -4,11 +4,12 @@ export declare enum NodeType {
     HR = "hr",
     HEADING = "heading",
     LIST = "list",
-    LI = "listitem"
+    LI = "listitem",
+    BLOCKQUOTE = "blockquote"
 }
 export type ParagraphNode = {
     type: NodeType.PARAGRAPH;
-    contents: string;
+    children: string;
 };
 export type ImageNode = {
     type: NodeType.IMAGE;
@@ -22,7 +23,11 @@ export type ListNode = {
 };
 export type ListItemNode = {
     type: NodeType.LI;
-    contents: BodyNode[];
+    children: BodyNode[];
+};
+export type BlockquoteNode = {
+    type: NodeType.BLOCKQUOTE;
+    children: BodyNode[];
 };
 export type HrNode = {
     type: NodeType.HR;
@@ -30,9 +35,9 @@ export type HrNode = {
 export type HeadingNode = {
     type: NodeType.HEADING;
     level: number;
-    contents: string;
+    children: string;
 };
-export type BodyNode = ParagraphNode | ImageNode | HrNode | HeadingNode | ListNode | ListItemNode;
+export type BodyNode = ParagraphNode | BlockquoteNode | ImageNode | HrNode | HeadingNode | ListNode | ListItemNode;
 export type PostBody = BodyNode[];
 export type Post = {
     pubdate: string;

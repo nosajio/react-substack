@@ -1,6 +1,6 @@
 {
   "name": "react-substack",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Read any Substack newsletter with React",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

@@ -74,15 +74,26 @@ exports.NodeType = void 0;
     NodeType["HEADING"] = "heading";
     NodeType["LIST"] = "list";
     NodeType["LI"] = "listitem";
+    NodeType["BLOCKQUOTE"] = "blockquote";
 })(exports.NodeType || (exports.NodeType = {}));
 
 var newParagraph = function (el) {
-    var contents = el.innerHTML;
-    if (!contents)
+    var children = el.innerHTML;
+    if (!children)
         return undefined;
     return {
         type: exports.NodeType.PARAGRAPH,
-        contents: contents,
+        children: children,
+    };
+};
+var newBlockquote = function (el) {
+    if (el.children.length === 0)
+        return undefined;
+    var childEls = Array.from(el.children);
+    var children = childEls.map(getChildNode).filter(Boolean);
+    return {
+        type: exports.NodeType.BLOCKQUOTE,
+        children: children,
     };
 };
 var newList = function (el) {
@@ -99,13 +110,13 @@ var newList = function (el) {
     };
 };
 var newListItem = function (el) {
-    var children = el.children;
-    var contents = Array.from(children)
+    var childrenEls = el.children;
+    var children = Array.from(childrenEls)
         .map(getChildNode)
         .filter(Boolean);
     return {
         type: exports.NodeType.LI,
-        contents: contents,
+        children: children,
     };
 };
 var newImage = function (el) {
@@ -123,13 +134,13 @@ var newImage = function (el) {
 };
 var newHeading = function (el) {
     var level = parseInt(el.nodeName[1]);
-    var contents = el.innerHTML;
-    if (!contents)
+    var children = el.innerHTML;
+    if (!children)
         return undefined;
     return {
         type: exports.NodeType.HEADING,
         level: level,
-        contents: contents,
+        children: children,
     };
 };
 var newHr = function () {
@@ -161,9 +172,11 @@ var recomposeHTML = function (nodes) {
         .map(function (n) {
         switch (n.type) {
             case exports.NodeType.PARAGRAPH:
-                return "<p>".concat(n.contents, "</p>");
+                return "<p>".concat(n.children, "</p>");
+            case exports.NodeType.BLOCKQUOTE:
+                return "<blockquote>".concat(recomposeHTML(n.children), "</blockquote>");
             case exports.NodeType.HEADING:
-                return "<h".concat(n.level, ">").concat(n.contents, "</h").concat(n.level, ">");
+                return "<h".concat(n.level, ">").concat(n.children, "</h").concat(n.level, ">");
             case exports.NodeType.IMAGE:
                 return "<figure class=\"post-image\"><img src=\"".concat(n.src, "\"/>").concat(n.caption ? "<figcaption>".concat(n.caption, "</figcaption>") : '', "</figure>");
             case exports.NodeType.HR:
@@ -171,7 +184,7 @@ var recomposeHTML = function (nodes) {
             case exports.NodeType.LIST: {
                 var listType = n.ordered ? 'ol' : 'ul';
                 return "<".concat(listType, ">").concat(n.items
-                    .map(function (o) { return "<li>".concat(recomposeHTML(o.contents), "</li>"); })
+                    .map(function (o) { return "<li>".concat(recomposeHTML(o.children), "</li>"); })
                     .join('\n'), "</").concat(listType, ">");
             }
             default:
@@ -188,6 +201,8 @@ var getChildNode = function (el) {
     switch (el.tagName) {
         case 'P':
             return newParagraph(el);
+        case 'BLOCKQUOTE':
+            return newBlockquote(el);
         case 'DIV': {
             if (el.classList.contains('captioned-image-container')) {
                 return newImage(el);
