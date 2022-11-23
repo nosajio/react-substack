@@ -166,6 +166,12 @@ var recomposeHTML = function (nodes) {
                 return "<figure class=\"post-image\"><img src=\"".concat(n.src, "\"/>").concat(n.caption ? "<figcaption>".concat(n.caption, "</figcaption>") : '', "</figure>");
             case NodeType.HR:
                 return '<hr />';
+            case NodeType.LIST: {
+                var listType = n.ordered ? 'ol' : 'ul';
+                return "<".concat(listType, ">").concat(n.items
+                    .map(function (o) { return "<li>".concat(recomposeHTML(o.contents), "</li>"); })
+                    .join('\n'), "</").concat(listType, ">");
+            }
             default:
                 return '';
         }
