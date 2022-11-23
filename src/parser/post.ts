@@ -3,10 +3,12 @@ import {
   HeadingNode,
   HrNode,
   ImageNode,
+  ListItemNode,
+  ListNode,
   NodeType,
   ParagraphNode,
   Post,
-  PostBody
+  PostBody,
 } from './types';
 
 interface BuilderFn<T extends BodyNode> {
@@ -18,6 +20,30 @@ export const newParagraph: BuilderFn<ParagraphNode> = (el) => {
   if (!contents) return undefined;
   return {
     type: NodeType.PARAGRAPH,
+    contents,
+  };
+};
+
+export const newList: BuilderFn<ListNode> = (el) => {
+  const ordered = el.tagName === 'OL';
+  const liEls = el.querySelectorAll('li');
+  const childLis = Array.from(liEls).filter((em) => em.parentElement === el);
+  const items = childLis.map(newListItem).filter(Boolean) as ListItemNode[];
+  if (items.length === 0) return undefined;
+  return {
+    type: NodeType.LIST,
+    ordered,
+    items,
+  };
+};
+
+export const newListItem: BuilderFn<ListItemNode> = (el) => {
+  const children = el.children;
+  const contents = Array.from(children)
+    .map(getChildNode)
+    .filter(Boolean) as BodyNode[];
+  return {
+    type: NodeType.LI,
     contents,
   };
 };
@@ -88,33 +114,43 @@ const recomposeHTML = (nodes: PostBody): string =>
     })
     .join('\n');
 
+/**
+ * Resolve BodyNodes from HTMLElements
+ */
+const getChildNode = (el: Element) => {
+  switch (el.tagName) {
+    case 'P':
+      return newParagraph(el);
+    case 'DIV': {
+      if (el.classList.contains('captioned-image-container')) {
+        return newImage(el);
+      }
+      if (el.children?.[0] && el.children[0].tagName === 'HR') {
+        return newHr(el);
+      }
+      return undefined;
+    }
+    case 'LI': {
+      return newListItem(el);
+    }
+    default: {
+      if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
+        return newHeading(el);
+      }
+      if (['UL', 'OL'].includes(el.tagName)) {
+        return newList(el);
+      }
+      return undefined;
+    }
+  }
+};
+
 export const parseBody = (
   rawBodyHTML: string,
 ): { nodes: PostBody; html: string } => {
   const dom = new DOMParser().parseFromString(rawBodyHTML, 'text/html');
   const units = Array.from(dom.body.children);
-
-  const bodyRaw = units.map((el) => {
-    switch (el.tagName) {
-      case 'P':
-        return newParagraph(el);
-      case 'DIV': {
-        if (el.classList.contains('captioned-image-container')) {
-          return newImage(el);
-        }
-        if (el.children?.[0] && el.children[0].tagName === 'HR') {
-          return newHr(el);
-        }
-        return undefined;
-      }
-      default: {
-        if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
-          return newHeading(el);
-        }
-        return undefined;
-      }
-    }
-  });
+  const bodyRaw = units.map(getChildNode);
 
   // Remove all undefined elements from map
   const nodes = bodyRaw.filter(Boolean) as PostBody;

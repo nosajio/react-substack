@@ -4,4 +4,4 @@
 - [] Embedded tweets.
 - [] Embedded videos.
 - [] Blockquotes.
-- [] Nested lists.
+- [x] Nested lists.
