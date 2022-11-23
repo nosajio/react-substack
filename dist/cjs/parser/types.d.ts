@@ -1,9 +1,10 @@
 export declare enum NodeType {
     PARAGRAPH = "paragraph",
     IMAGE = "image",
-    VIDEO = "video",
     HR = "hr",
-    HEADING = "heading"
+    HEADING = "heading",
+    LIST = "list",
+    LI = "listitem"
 }
 export type ParagraphNode = {
     type: NodeType.PARAGRAPH;
@@ -14,9 +15,14 @@ export type ImageNode = {
     caption?: string;
     src: string;
 };
-export type VideoNode = {
-    type: NodeType.VIDEO;
-    src: string;
+export type ListNode = {
+    type: NodeType.LIST;
+    ordered: boolean;
+    items: ListItemNode[];
+};
+export type ListItemNode = {
+    type: NodeType.LI;
+    contents: BodyNode[];
 };
 export type HrNode = {
     type: NodeType.HR;
@@ -26,7 +32,7 @@ export type HeadingNode = {
     level: number;
     contents: string;
 };
-export type BodyNode = ParagraphNode | ImageNode | HrNode | HeadingNode;
+export type BodyNode = ParagraphNode | ImageNode | HrNode | HeadingNode | ListNode | ListItemNode;
 export type PostBody = BodyNode[];
 export type Post = {
     pubdate: string;

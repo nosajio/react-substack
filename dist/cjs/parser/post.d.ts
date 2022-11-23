@@ -1,8 +1,10 @@
-import { BodyNode, HeadingNode, HrNode, ImageNode, ParagraphNode, Post, PostBody } from './types';
+import { BodyNode, HeadingNode, HrNode, ImageNode, ListItemNode, ListNode, ParagraphNode, Post, PostBody } from './types';
 interface BuilderFn<T extends BodyNode> {
     (el: Element): T | undefined;
 }
 export declare const newParagraph: BuilderFn<ParagraphNode>;
+export declare const newList: BuilderFn<ListNode>;
+export declare const newListItem: BuilderFn<ListItemNode>;
 export declare const newImage: BuilderFn<ImageNode>;
 export declare const newHeading: BuilderFn<HeadingNode>;
 export declare const newHr: BuilderFn<HrNode>;

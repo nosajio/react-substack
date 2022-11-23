@@ -70,9 +70,10 @@ exports.NodeType = void 0;
 (function (NodeType) {
     NodeType["PARAGRAPH"] = "paragraph";
     NodeType["IMAGE"] = "image";
-    NodeType["VIDEO"] = "video";
     NodeType["HR"] = "hr";
     NodeType["HEADING"] = "heading";
+    NodeType["LIST"] = "list";
+    NodeType["LI"] = "listitem";
 })(exports.NodeType || (exports.NodeType = {}));
 
 var newParagraph = function (el) {
@@ -81,6 +82,29 @@ var newParagraph = function (el) {
         return undefined;
     return {
         type: exports.NodeType.PARAGRAPH,
+        contents: contents,
+    };
+};
+var newList = function (el) {
+    var ordered = el.tagName === 'OL';
+    var liEls = el.querySelectorAll('li');
+    var childLis = Array.from(liEls).filter(function (em) { return em.parentElement === el; });
+    var items = childLis.map(newListItem).filter(Boolean);
+    if (items.length === 0)
+        return undefined;
+    return {
+        type: exports.NodeType.LIST,
+        ordered: ordered,
+        items: items,
+    };
+};
+var newListItem = function (el) {
+    var children = el.children;
+    var contents = Array.from(children)
+        .map(getChildNode)
+        .filter(Boolean);
+    return {
+        type: exports.NodeType.LI,
         contents: contents,
     };
 };
@@ -150,31 +174,41 @@ var recomposeHTML = function (nodes) {
     })
         .join('\n');
 };
+/**
+ * Resolve BodyNodes from HTMLElements
+ */
+var getChildNode = function (el) {
+    var _a;
+    switch (el.tagName) {
+        case 'P':
+            return newParagraph(el);
+        case 'DIV': {
+            if (el.classList.contains('captioned-image-container')) {
+                return newImage(el);
+            }
+            if (((_a = el.children) === null || _a === void 0 ? void 0 : _a[0]) && el.children[0].tagName === 'HR') {
+                return newHr();
+            }
+            return undefined;
+        }
+        case 'LI': {
+            return newListItem(el);
+        }
+        default: {
+            if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
+                return newHeading(el);
+            }
+            if (['UL', 'OL'].includes(el.tagName)) {
+                return newList(el);
+            }
+            return undefined;
+        }
+    }
+};
 var parseBody = function (rawBodyHTML) {
     var dom = new DOMParser().parseFromString(rawBodyHTML, 'text/html');
     var units = Array.from(dom.body.children);
-    var bodyRaw = units.map(function (el) {
-        var _a;
-        switch (el.tagName) {
-            case 'P':
-                return newParagraph(el);
-            case 'DIV': {
-                if (el.classList.contains('captioned-image-container')) {
-                    return newImage(el);
-                }
-                if (((_a = el.children) === null || _a === void 0 ? void 0 : _a[0]) && el.children[0].tagName === 'HR') {
-                    return newHr();
-                }
-                return undefined;
-            }
-            default: {
-                if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
-                    return newHeading(el);
-                }
-                return undefined;
-            }
-        }
-    });
+    var bodyRaw = units.map(getChildNode);
     // Remove all undefined elements from map
     var nodes = bodyRaw.filter(Boolean);
     // Recompose natural HTML
