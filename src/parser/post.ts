@@ -108,6 +108,12 @@ const recomposeHTML = (nodes: PostBody): string =>
           }</figure>`;
         case NodeType.HR:
           return '<hr />';
+        case NodeType.LIST: {
+          const listType = n.ordered ? 'ol' : 'ul';
+          return `<${listType}>${n.items
+            .map((o) => `<li>${recomposeHTML(o.contents)}</li>`)
+            .join('\n')}</${listType}>`;
+        }
         default:
           return '';
       }

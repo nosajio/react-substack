@@ -317,7 +317,12 @@ describe('parseBody', () => {
 
   it('generates bodyHTML string', () => {
     expect(typeof parsedHTML).toBe('string');
+  });
+  
+  it('generated bodyHTML string contains all NodeTypes', () => {
     expect(parsedHTML.includes('<p>')).toBeTruthy();
     expect(parsedHTML.includes('<h2>')).toBeTruthy();
+    expect(parsedHTML.includes('<ul>')).toBeTruthy();
+    expect(parsedHTML.includes('<li>')).toBeTruthy();
   });
 });
