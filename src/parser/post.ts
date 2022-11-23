@@ -1,4 +1,5 @@
 import {
+  BlockquoteNode,
   BodyNode,
   HeadingNode,
   HrNode,
@@ -16,11 +17,21 @@ interface BuilderFn<T extends BodyNode> {
 }
 
 export const newParagraph: BuilderFn<ParagraphNode> = (el) => {
-  const contents = el.innerHTML;
-  if (!contents) return undefined;
+  const children = el.innerHTML;
+  if (!children) return undefined;
   return {
     type: NodeType.PARAGRAPH,
-    contents,
+    children,
+  };
+};
+
+export const newBlockquote: BuilderFn<BlockquoteNode> = (el) => {
+  if (el.children.length === 0) return undefined;
+  const childEls = Array.from(el.children);
+  const children = childEls.map(getChildNode).filter(Boolean) as BodyNode[];
+  return {
+    type: NodeType.BLOCKQUOTE,
+    children,
   };
 };
 
@@ -38,13 +49,13 @@ export const newList: BuilderFn<ListNode> = (el) => {
 };
 
 export const newListItem: BuilderFn<ListItemNode> = (el) => {
-  const children = el.children;
-  const contents = Array.from(children)
+  const childrenEls = el.children;
+  const children = Array.from(childrenEls)
     .map(getChildNode)
     .filter(Boolean) as BodyNode[];
   return {
     type: NodeType.LI,
-    contents,
+    children,
   };
 };
 
@@ -63,12 +74,12 @@ export const newImage: BuilderFn<ImageNode> = (el) => {
 
 export const newHeading: BuilderFn<HeadingNode> = (el) => {
   const level = parseInt(el.nodeName[1]);
-  const contents = el.innerHTML;
-  if (!contents) return undefined;
+  const children = el.innerHTML;
+  if (!children) return undefined;
   return {
     type: NodeType.HEADING,
     level,
-    contents,
+    children,
   };
 };
 
@@ -99,9 +110,11 @@ const recomposeHTML = (nodes: PostBody): string =>
     .map((n) => {
       switch (n.type) {
         case NodeType.PARAGRAPH:
-          return `<p>${n.contents}</p>`;
+          return `<p>${n.children}</p>`;
+        case NodeType.BLOCKQUOTE:
+          return `<blockquote>${recomposeHTML(n.children)}</blockquote>`;
         case NodeType.HEADING:
-          return `<h${n.level}>${n.contents}</h${n.level}>`;
+          return `<h${n.level}>${n.children}</h${n.level}>`;
         case NodeType.IMAGE:
           return `<figure class="post-image"><img src="${n.src}"/>${
             n.caption ? `<figcaption>${n.caption}</figcaption>` : ''
@@ -111,7 +124,7 @@ const recomposeHTML = (nodes: PostBody): string =>
         case NodeType.LIST: {
           const listType = n.ordered ? 'ol' : 'ul';
           return `<${listType}>${n.items
-            .map((o) => `<li>${recomposeHTML(o.contents)}</li>`)
+            .map((o) => `<li>${recomposeHTML(o.children)}</li>`)
             .join('\n')}</${listType}>`;
         }
         default:
@@ -127,6 +140,8 @@ const getChildNode = (el: Element) => {
   switch (el.tagName) {
     case 'P':
       return newParagraph(el);
+    case 'BLOCKQUOTE':
+      return newBlockquote(el);
     case 'DIV': {
       if (el.classList.contains('captioned-image-container')) {
         return newImage(el);

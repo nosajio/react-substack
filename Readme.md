@@ -1,7 +1,8 @@
 # React Substack
 
-### Todo list
+### Coming soon!
 - [] Embedded tweets.
 - [] Embedded videos.
-- [] Blockquotes.
+- [x] Blockquotes.
 - [x] Nested lists.
+- [] Progressive images.
