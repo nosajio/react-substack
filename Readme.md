@@ -121,7 +121,8 @@ npm test
 - [ ] Embedded videos.
 - [ ] Progressive images.
 - [ ] Configurable proxy.
-- [ ] React Server Components support
+- [ ] React Server Components support.
+- [ ] Make the bundle size smaller.
 
 ## LICENSE
 React Substack uses the MIT License.
