@@ -1,7 +1,7 @@
 import { parseFeed } from './parser';
 import type { Substack } from './parser/types';
 
-const proxyBaseUrl = 'http://localhost:3909';
+const proxyBaseUrl = 'https://feed.reactsubstack.com';
 
 export const proxyUrl = (subdomain: string) => `${proxyBaseUrl}/${subdomain}`;
 
