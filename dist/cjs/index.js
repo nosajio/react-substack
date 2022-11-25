@@ -297,7 +297,7 @@ var parseFeed = function (feed, subdomain) {
     };
 };
 
-var proxyBaseUrl = 'http://localhost:3909';
+var proxyBaseUrl = 'https://feed.reactsubstack.com';
 var proxyUrl = function (subdomain) { return "".concat(proxyBaseUrl, "/").concat(subdomain); };
 /**
  * Get the raw XML feed for any substack
